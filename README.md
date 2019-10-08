@@ -3,9 +3,7 @@
 
 Rozsáhlejší plánování projektu se nachází zde: https://tinyurl.com/damis-projekt
 
-<hr>
 <h2>ročníkový projekt - termokamera</h2>
-<br>
 <p>Jedná se o přenosné zařízení zachycující termální stopu prostředí se zobrazením na displeji.</p>
 Vzhledem k tepelné citlivosti 8x8 bodů je vykreslení použitelného obrazu o vyšším rozlišení dosaženo interpolací dat.
 
