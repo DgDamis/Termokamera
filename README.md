@@ -19,9 +19,10 @@ Nabíjení je možné dvěma konektory  - Micro USB a USB-C - MAX 5V!
 
 <h3>Postup práce:</h3><p>
 Studie, instalace aplikace pro návrh elektronických zařízení - KiCad &#10004;<br>
-Vytvoření vlastních součástek v KiCadu, které nejsou dostupné v již připravených knihovnách<br>
-Kompletace schématu (eeschema) zařízení v KiCad<br>
-  <br>
-kontrola součástek - zahrnuje přípravu pro připojení, tedy připájení pinů pro testovací provoz za využití nepájivého pole
-implementace základních funkcí
+Vytvoření vlastních součástek v KiCadu, které nejsou dostupné v již připravených knihovnách &#10004;<br>
+Kompletace schématu (eeschema) zařízení v KiCad &#10004;<br>
+příprava připojení, tedy připájení pinů pro testovací provoz za využití nepájivého pole &#10004;<br>
+zadrátování součástek na nepájivém poli &#10004;<br>
+<br>
+otestování součástek
 </p>
