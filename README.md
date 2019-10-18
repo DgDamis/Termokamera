@@ -24,5 +24,19 @@ Kompletace schématu (eeschema) zařízení v KiCad &#10004;<br>
 příprava připojení, tedy připájení pinů pro testovací provoz za využití nepájivého pole &#10004;<br>
 zadrátování součástek na nepájivém poli &#10004;<br>
 <br>
-otestování součástek
+	<li>
+	Otestování součástek
+		<ul>Funkční Wemos D1 mini &#10004</ul>
+		<ul>Funkční ILI9341 &#10004</ul>
+		<ul>Funkční AMG8833 &#10004</ul>
+	</li>
+<br>
+	<li>
+	Příprava pouzdra - Tisk
+		<ul>AMG8833 Adaptér &#10004;</ul>
+		<ul>Tělo pouzdra</ul>
+		<ul>Vrchní kryt pouzdra &#10004;</ul>
+		<ul>Držák</ul>
+		<ul>Úchyt &#10004;</ul>
+	</li>
 </p>
