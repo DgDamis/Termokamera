@@ -42,8 +42,6 @@
 #include <ArduinoOTA.h>
 #endif
 
-
-
 #include <TFT_eSPI.h>
 #include <Adafruit_AMG88xx.h>       //Thermal camera lib
 #include <SD.h>						//SD Lib
@@ -51,8 +49,6 @@
 #include <Wire.h>
 #include <user_interface.h>
 
-
-uint8_t const  SD_CHIP_SELECT_PIN = D4;
 
 #ifdef USE_OTA
 #warning Set your WiFi Passwords here!
@@ -144,6 +140,11 @@ Sd2Card card;
 SdVolume volume;
 SdFile root;
 const int sd_ss = D4;
+/*
+const int sd_miso = D6;
+const int sd_mosi = D7;
+const int sd_clock = D5;
+*/
 File image_file;
 bool SD_present = 0;
 unsigned long last_image_time = 0;
