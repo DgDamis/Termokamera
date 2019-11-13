@@ -107,14 +107,7 @@ $EndComp
 Wire Wire Line
 	5800 3450 4400 3450
 Wire Wire Line
-	5800 3450 5800 4900
-Wire Wire Line
 	5100 5250 5100 4900
-Wire Wire Line
-	5100 4900 5500 4900
-Connection ~ 5800 4900
-Wire Wire Line
-	5800 4900 5800 5250
 Wire Wire Line
 	2250 3550 2250 4550
 Wire Wire Line
@@ -157,11 +150,6 @@ Wire Wire Line
 Wire Wire Line
 	4250 5650 4400 5650
 Wire Wire Line
-	5500 4900 5500 5250
-Connection ~ 5500 4900
-Wire Wire Line
-	5500 4900 5800 4900
-Wire Wire Line
 	4400 4050 4600 4050
 Wire Wire Line
 	3750 1350 3750 1600
@@ -202,7 +190,6 @@ Wire Wire Line
 	5100 4900 2700 4900
 Wire Wire Line
 	2700 4900 2700 5250
-Connection ~ 5100 4900
 Wire Wire Line
 	3400 3850 2400 3850
 Wire Wire Line
@@ -212,18 +199,12 @@ Wire Wire Line
 Wire Wire Line
 	2500 3950 3400 3950
 NoConn ~ 2650 2500
-NoConn ~ 3400 3650
 NoConn ~ 3400 4050
 NoConn ~ 3400 4150
-NoConn ~ 4400 4150
 NoConn ~ 4400 5750
 NoConn ~ 4400 5850
 NoConn ~ 4400 5950
 NoConn ~ 4400 6050
-NoConn ~ 6500 5650
-NoConn ~ 6500 5750
-NoConn ~ 6500 5850
-NoConn ~ 6500 5950
 Wire Wire Line
 	2450 3450 800  3450
 Wire Wire Line
@@ -259,4 +240,47 @@ F 3 "" H 2550 2900 50  0001 C CNN
 	1    2550 2900
 	0    1    1    0   
 $EndComp
+Wire Wire Line
+	5200 3850 7150 3850
+Wire Wire Line
+	7150 3850 7150 5950
+Wire Wire Line
+	7150 5950 6500 5950
+Connection ~ 5200 3850
+Wire Wire Line
+	5000 3750 7000 3750
+Wire Wire Line
+	7000 3750 7000 5850
+Wire Wire Line
+	7000 5850 6500 5850
+Connection ~ 5000 3750
+Wire Wire Line
+	5300 3650 6850 3650
+Wire Wire Line
+	6850 3650 6850 5750
+Wire Wire Line
+	6850 5750 6500 5750
+Connection ~ 5300 3650
+Wire Wire Line
+	5500 4150 4400 4150
+Wire Wire Line
+	5800 3450 5800 4900
+Wire Wire Line
+	5500 4150 5500 5250
+Wire Wire Line
+	5100 4900 5800 4900
+Connection ~ 5100 4900
+Connection ~ 5800 4900
+Wire Wire Line
+	5800 4900 5800 5250
+Wire Wire Line
+	3400 3650 2900 3650
+Wire Wire Line
+	2900 3650 2900 4450
+Wire Wire Line
+	2900 4450 6700 4450
+Wire Wire Line
+	6700 4450 6700 5650
+Wire Wire Line
+	6700 5650 6500 5650
 $EndSCHEMATC
