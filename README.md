@@ -23,6 +23,10 @@ Vytvoření vlastních součástek v KiCadu, které nejsou dostupné v již při
 Kompletace schématu (eeschema) zařízení v KiCad &#10004;<br>
 příprava připojení, tedy připájení pinů pro testovací provoz za využití nepájivého pole &#10004;<br>
 zadrátování součástek na nepájivém poli &#10004;<br>
+adaptace ovládacího kódu &#10004;<br>
+kompilace základního kódu &#10004;<br>
+vyřešení problému se závislými knihovnami &#10004;<br>
+kompilace rozšířeného kódu &#10004;<br>
 <br>
 	<li>
 	Otestování součástek
@@ -34,9 +38,9 @@ zadrátování součástek na nepájivém poli &#10004;<br>
 	<li>
 	Příprava pouzdra - Tisk
 		<ul>AMG8833 Adaptér &#10004;</ul>
-		<ul>Tělo pouzdra</ul>
+		<ul>Tělo pouzdra &#10004;</ul>
 		<ul>Vrchní kryt pouzdra &#10004;</ul>
-		<ul>Držák</ul>
+		<ul>Držák &#10004;</ul>
 		<ul>Úchyt &#10004;</ul>
 	</li>
 </p>
