@@ -56,7 +56,7 @@ const char* password = "yourPass";
 #endif
 
 
-#define PIN_INT -1                      //D0 Interrupt from touch for autoscale/scale
+#define PIN_INT D4               //D0 Interrupt from touch for autoscale/scale
 
 // constants for the cute little keypad
 #define KEYPAD_TOP 15
@@ -138,7 +138,7 @@ Adafruit_AMG88xx ThermalSensor;
 Sd2Card card;
 SdVolume volume;
 SdFile root;
-const int sd_ss = D4;
+const int sd_ss = D0;
 /*
 const int sd_miso = D6;
 const int sd_mosi = D7;
@@ -151,7 +151,8 @@ unsigned long last_image_time = 0;
 
 
 //Capture Image Button
-const int capture_button = D0;
+const int capture_button = GPIO_ID_PIN(3);
+uint64_t lastPress = 0;
 volatile bool get_image = 0;
 volatile unsigned long last_image = 0;
 
@@ -207,8 +208,11 @@ void InterpolateCols() {
 
 //Sets variable after button was pressed
 void capture_image_isr() {
-	if (millis() - last_image >= 400) {
-		get_image = 1;
+	if(lastPress+50 < millis()){
+		if (millis() - last_image >= 400) {
+			get_image = 1;
+		}
+		lastPress = millis();
 	}
 }
 
@@ -656,9 +660,9 @@ void setup() {
 	pinMode(TFT_DC, OUTPUT);
 	pinMode(sd_ss, OUTPUT);
 	pinMode(capture_button, INPUT);
-	
-
-	//attachInterrupt(digitalPinToInterrupt(capture_button), capture_image_isr, FALLING); //D0 cant be used for interrupts :(
+	// Button Image Capture - Interrupt
+	attachInterrupt(digitalPinToInterrupt(capture_button), capture_image_isr, FALLING); //D0 cant be used for interrupts :(
+	//attachInterrupt(digitalPinToInterrupt(PIN_INT),trigger_scale_isr,??); 
 
 	// Set A0 to input for battery measurement
 	pinMode(A0, INPUT);
@@ -669,10 +673,8 @@ void setup() {
 	//Start the display and set the background to black
 	SPI.begin();
 
-	//activate_sd(1);
 	Serial.println("\nInitializing SD card...");
 	print_sd_info();
-	//activate_sd(0);
 
 	SPI.setFrequency(80000000L);
 	Display.begin();
@@ -795,11 +797,6 @@ void setup() {
 
 void loop() {
 
-	// if someone touched the screen do something with it
-	//  if (Touch.dataAvailable()) {
-	//   ProcessTouch();
-	// }
-
 	if (get_image) {	//Capture Image
 		Serial.println("image");
 
@@ -810,9 +807,7 @@ void loop() {
 	}
 
 	if (digitalRead(PIN_INT) == false) {
-		//Serial.println("low");
 		SetTempScale();
-
 		if (millis() - tempTime > 2000) {
 			measure = !measure;
 			tempTime = millis();
@@ -851,7 +846,9 @@ void loop() {
 	tempTime2 = millis();*/
 	
 	//Use this if you can't use intterupts for the image capture button
+	/*
 	if (!digitalRead(capture_button)) {
 		capture_image();
 	}
+	*/
 }
