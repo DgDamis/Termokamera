@@ -34,7 +34,6 @@
   D6          Dispaly SDO
   D5          Display SCK
 */
-
 #ifdef USE_OTA
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
@@ -145,7 +144,8 @@ const int sd_miso = D6;
 const int sd_mosi = D7;
 const int sd_clock = D5;
 */
-File image_file;
+
+SDLib::File image_file;
 bool SD_present = 0;
 unsigned long last_image_time = 0;
 
