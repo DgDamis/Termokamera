@@ -2,7 +2,7 @@
 #define SAVE70x70
 //#define SAVE8X8
 //OTA
-#define USE_OTA
+//define USE_OTA
 
 /*
   This program is for upsizing an 8 x 8 array of thermal camera readings
@@ -57,6 +57,8 @@ const char* password = "yourPass";
 
 
 #define PIN_INT D4               //D0 Interrupt from touch for autoscale/scale
+uint64_t lastTouch_time = 0;
+bool scaleTemp_flag = false;
 
 // constants for the cute little keypad
 #define KEYPAD_TOP 15
@@ -156,6 +158,8 @@ uint64_t lastPress = 0;
 volatile bool get_image = 0;
 volatile unsigned long last_image = 0;
 
+//Debug timer
+uint64_t pinCheck_timer = 0;
 
 // interplation function to create 70 columns for 8 rows
 void InterpolateRows() {
@@ -207,14 +211,24 @@ void InterpolateCols() {
 }
 
 //Sets variable after button was pressed
-void capture_image_isr() {
+void ICACHE_RAM_ATTR capture_image_isr() {
 	if(lastPress+50 < millis()){
+		Serial.println(F("Image Capture Button Initiated."));
 		if (millis() - last_image >= 400) {
 			get_image = 1;
 		}
 		lastPress = millis();
 	}
 }
+
+void ICACHE_RAM_ATTR trigger_scale_isr() {
+	if(lastTouch_time+50 < millis() && millis() > 5000){
+		Serial.print(F("Touch Interrupt Function Initiated."));
+		lastTouch_time = millis();
+		scaleTemp_flag = true;
+	}
+}
+
 
 // my fast yet effective color interpolation routine
 uint16_t GetColor(float val) {
@@ -660,9 +674,10 @@ void setup() {
 	pinMode(TFT_DC, OUTPUT);
 	pinMode(sd_ss, OUTPUT);
 	pinMode(capture_button, INPUT);
+	pinMode(PIN_INT,INPUT);
 	// Button Image Capture - Interrupt
 	attachInterrupt(digitalPinToInterrupt(capture_button), capture_image_isr, FALLING); //D0 cant be used for interrupts :(
-	//attachInterrupt(digitalPinToInterrupt(PIN_INT),trigger_scale_isr,??); 
+	attachInterrupt(digitalPinToInterrupt(PIN_INT),trigger_scale_isr, CHANGE); 
 
 	// Set A0 to input for battery measurement
 	pinMode(A0, INPUT);
@@ -806,8 +821,10 @@ void loop() {
 		get_image = 0;
 	}
 
-	if (digitalRead(PIN_INT) == false) {
+	if (scaleTemp_flag) {
+		Serial.println(F("Touch Initiated in loop!"));
 		SetTempScale();
+		scaleTemp_flag = false;
 		if (millis() - tempTime > 2000) {
 			measure = !measure;
 			tempTime = millis();
@@ -851,4 +868,8 @@ void loop() {
 		capture_image();
 	}
 	*/
+	if(pinCheck_timer + 2000 < millis()){
+		Serial.printf("Touch Pin State: %d \n", digitalRead(PIN_INT));
+		pinCheck_timer = millis();
+	}
 }

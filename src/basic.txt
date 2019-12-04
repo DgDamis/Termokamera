@@ -53,7 +53,7 @@
 #include <Adafruit_ILI9341.h>
 #include <Adafruit_AMG88xx.h>       // thermal camera lib
 
-#define PIN_INT D0                      // Interrupt from touch for autoscale/scale
+#define PIN_INT D4                     // Interrupt from touch for autoscale/scale
 
 // constants for the cute little keypad
 #define KEYPAD_TOP 15
