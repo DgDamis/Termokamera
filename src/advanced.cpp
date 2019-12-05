@@ -1,38 +1,37 @@
-//SD Image Save
-#define SAVE70x70
-//#define SAVE8X8
-//OTA
-//define USE_OTA
+#define SAVE70x70		//SD Image Capture - preference
+//#define SAVE8X8		//SD Image Capture - preference
+//#define USE_OTA		//Uncomment to enable OTA, remember to change WiFi credentials
+#define DEBUG			//Uncomment to enable DEBUG Mode - Serial line is initialized and debug messages sent out
 
 /*
-  This program is for upsizing an 8 x 8 array of thermal camera readings
-  it will size up by 10x and display to a 240 x 320
-  interpolation is linear and "good enough" given the display is a 5-6-5 color palette
-  Total final array is an array of 70 x 70 of internal points only
-  Revisions
-  1.0		Kasprzak      Initial code
-  Branches
-  1.0		Deiss         Code modified for Wemos D1 Mini, vertical display, temperature measurement at center, battery measurement
-  1.1		Deiss         Exchanged TFT driver for better performance regarding framerate
-  2.0		Wilhelm Zeuschner: Added SD-card support and OTA-Updating (hold the capture image button down during boot)
-			https://github.com/wilhelmzeuschner/arduino_thermal_camera_with_sd_and_img_processing
-  MCU                       Wemos D1 Mini clone
-  Display                   https://www.amazon.com/Wrisky-240x320-Serial-Module-ILI9341/dp/B01KX26JJU/ref=sr_1_10?ie=UTF8&qid=1510373771&sr=8-10&keywords=240+x+320+tft
-  Thermal sensor            https://learn.adafruit.com/adafruit-amg8833-8x8-thermal-camera-sensor/overview
-  sensor library            https://github.com/adafruit/Adafruit_AMG88xx
-  equations generated from  http://web-tech.ga-usa.com/2012/05/creating-a-custom-hot-to-cold-temperature-color-gradient-for-use-with-rrdtool/index.html
-  Pinouts
-  MCU         Device
-  D1          AMG SDA
-  D2          AMG SCL
-  Gnd         Dispaly GND, AMG Gnd
-  3v3         Dispaly Vcc,Display LED,Display RST, AMG Vcc
-  D0          Dispaly T_IRQ
-  D8          Display D/C
-  D3          Display CS
-  D7          Display SDI
-  D6          Dispaly SDO
-  D5          Display SCK
+  Description:
+  	This program is for upsizing an 8 x 8 array of thermal camera readings
+  	it will size up by 10x and display to a 240 x 320
+  	interpolation is linear and "good enough" given the display is a 5-6-5 color palette
+  	Total final array is an array of 70 x 70 of internal points only
+  Revisions:
+	1.0		Kasprzak      Initial code
+  Branches:
+	1.0		Deiss         Code modified for Wemos D1 Mini, vertical display, temperature measurement at center, battery measurement
+	1.1		Deiss         Exchanged TFT driver for better performance regarding framerate
+	2.0		Wilhelm Zeuschner: Added SD-card support and OTA-Updating 		[https://github.com/wilhelmzeuschner/arduino_thermal_camera_with_sd_and_img_processing]
+	2.1		DgDamis 		Critical bug fixes, full platformio support, better code typography 	[https://github.com/dgdamis/termokamera]
+  Components:
+  	MCU                       Wemos D1 Mini clone
+  	Display                   Ili9341
+  	Thermal sensor            AMG8833 	https://learn.adafruit.com/adafruit-amg8833-8x8-thermal-camera-sensor/overview  Alternatively you can buy a related sensor from Aliexpress										equations generated from  http://web-tech.ga-usa.com/2012/05/creating-a-custom-hot-to-cold-temperature-color-gradient-for-use-with-rrdtool/index.html
+  Pinouts:
+  	MCU         Device
+  	D1          AMG SDA
+  	D2          AMG SCL
+  	Gnd         Dispaly GND, AMG Gnd
+  	3v3         Dispaly Vcc,Display LED,Display RST, AMG Vcc
+  	D0          Dispaly T_IRQ
+  	D8          Display D/C
+  	D3          Display CS
+  	D7          Display SDI
+  	D6          Dispaly SDO
+  	D5          Display SCK
 */
 #ifdef USE_OTA
 #include <ESP8266WiFi.h>
