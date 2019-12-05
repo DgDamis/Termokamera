@@ -1,4 +1,5 @@
 EESchema Schematic File Version 4
+LIBS:Termokamera_KiCad-cache
 EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
@@ -13,33 +14,15 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-Wire Wire Line
-	3350 1600 3750 1600
-Connection ~ 3750 1900
-Wire Wire Line
-	3750 1900 3350 1900
-Wire Wire Line
-	3750 1900 3750 2200
 $Comp
 L Device:Battery_Cell Li-ion_battery
 U 1 1 5D9AA68B
-P 3750 1800
-F 0 "Li-ion_battery" V 3495 1850 50  0000 C CNN
-F 1 "NCR18650B" V 3586 1850 50  0000 C CNN
-F 2 "" V 3750 1860 50  0001 C CNN
-F 3 "~" V 3750 1860 50  0001 C CNN
-	1    3750 1800
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:Battery_Cell Li-ion_battery
-U 1 1 5D9A9183
-P 3350 1800
-F 0 "Li-ion_battery" V 3095 1850 50  0000 C CNN
-F 1 "NCR18650B" V 3186 1850 50  0000 C CNN
-F 2 "" V 3350 1860 50  0001 C CNN
-F 3 "~" V 3350 1860 50  0001 C CNN
-	1    3350 1800
+P 3500 1800
+F 0 "Li-ion_battery" V 3245 1850 50  0000 C CNN
+F 1 "NCR18650B" V 3336 1850 50  0000 C CNN
+F 2 "" V 3500 1860 50  0001 C CNN
+F 3 "~" V 3500 1860 50  0001 C CNN
+	1    3500 1800
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -66,29 +49,10 @@ F 3 "" H 1700 1650 50  0001 C CNN
 	1    1700 1650
 	1    0    0    -1  
 $EndComp
-Connection ~ 3750 1600
 Wire Wire Line
 	3000 1650 3000 1350
 Wire Wire Line
-	3000 1350 3750 1350
-Wire Wire Line
 	3000 1850 3000 2200
-Wire Wire Line
-	3000 2200 3750 2200
-Wire Wire Line
-	2250 1500 2550 1500
-Wire Wire Line
-	2550 1500 2550 2100
-Wire Wire Line
-	2250 2000 2250 2500
-Wire Wire Line
-	2450 3300 2450 3450
-Wire Wire Line
-	2450 3450 3400 3450
-Wire Wire Line
-	2250 3300 2250 3550
-Wire Wire Line
-	2250 3550 3400 3550
 Wire Wire Line
 	2250 1650 3000 1650
 Wire Wire Line
@@ -105,16 +69,9 @@ F 3 "" H 4700 5850 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5800 3450 4400 3450
-Wire Wire Line
 	5100 5250 5100 4900
 Wire Wire Line
-	2250 3550 2250 4550
-Wire Wire Line
-	2250 4550 2600 4550
-Wire Wire Line
 	5700 4550 5700 5250
-Connection ~ 2250 3550
 Wire Wire Line
 	4400 3550 5600 3550
 Wire Wire Line
@@ -140,21 +97,9 @@ Wire Wire Line
 Wire Wire Line
 	5400 4700 5400 5250
 Wire Wire Line
-	4400 3950 4800 3950
-Wire Wire Line
-	4800 3950 4800 5200
-Wire Wire Line
-	4800 5200 4250 5200
-Wire Wire Line
-	4250 5200 4250 5650
-Wire Wire Line
 	4250 5650 4400 5650
 Wire Wire Line
 	4400 4050 4600 4050
-Wire Wire Line
-	3750 1350 3750 1600
-Wire Wire Line
-	3750 1600 4600 1600
 Wire Wire Line
 	4600 1600 4600 2350
 $Comp
@@ -183,7 +128,6 @@ F 3 "" H 2550 5350 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	2600 4550 2600 5250
-Connection ~ 2600 4550
 Wire Wire Line
 	2600 4550 5700 4550
 Wire Wire Line
@@ -198,22 +142,13 @@ Wire Wire Line
 	2500 5250 2500 3950
 Wire Wire Line
 	2500 3950 3400 3950
-NoConn ~ 2650 2500
-NoConn ~ 3400 4050
 NoConn ~ 3400 4150
 NoConn ~ 4400 5750
 NoConn ~ 4400 5850
 NoConn ~ 4400 5950
 NoConn ~ 4400 6050
 Wire Wire Line
-	2450 3450 800  3450
-Wire Wire Line
-	800  3450 800  1500
-Wire Wire Line
 	800  1500 1150 1500
-Connection ~ 2450 3450
-Wire Wire Line
-	2250 3550 1000 3550
 Wire Wire Line
 	1000 3550 1000 2000
 Wire Wire Line
@@ -221,23 +156,23 @@ Wire Wire Line
 $Comp
 L Switch:SW_DPDT_x2 SW?
 U 1 1 5D9E5466
-P 2550 2300
-F 0 "SW?" H 2550 2585 50  0000 C CNN
-F 1 "SW_DPDT_x2" H 2550 2494 50  0000 C CNN
-F 2 "" H 2550 2300 50  0001 C CNN
-F 3 "~" H 2550 2300 50  0001 C CNN
-	1    2550 2300
-	0    1    1    0   
+P 2800 3300
+F 0 "SW?" H 2800 3500 50  0000 C CNN
+F 1 "SW_DPDT_x2" H 2800 3494 50  0001 C CNN
+F 2 "" H 2800 3300 50  0001 C CNN
+F 3 "~" H 2800 3300 50  0001 C CNN
+	1    2800 3300
+	-1   0    0    1   
 $EndComp
 $Comp
 L CustomParts:SX1308 U?
 U 1 1 5D9E6F09
-P 2550 2900
-F 0 "U?" V 2529 2888 50  0000 L CNN
-F 1 "SX1308" V 2620 2888 50  0000 L CNN
-F 2 "" H 2550 2900 50  0001 C CNN
-F 3 "" H 2550 2900 50  0001 C CNN
-	1    2550 2900
+P 2600 2650
+F 0 "U?" V 2579 2638 50  0000 L CNN
+F 1 "SX1308" V 2670 2638 50  0000 L CNN
+F 2 "" H 2600 2650 50  0001 C CNN
+F 3 "" H 2600 2650 50  0001 C CNN
+	1    2600 2650
 	0    1    1    0   
 $EndComp
 Wire Wire Line
@@ -274,13 +209,134 @@ Connection ~ 5800 4900
 Wire Wire Line
 	5800 4900 5800 5250
 Wire Wire Line
-	3400 3650 2900 3650
-Wire Wire Line
-	2900 3650 2900 4450
-Wire Wire Line
-	2900 4450 6700 4450
-Wire Wire Line
-	6700 4450 6700 5650
-Wire Wire Line
 	6700 5650 6500 5650
+$Comp
+L Switch:SW_Push SW?
+U 1 1 5DE7E5CB
+P 1500 3800
+F 0 "SW?" V 1546 3752 50  0000 R CNN
+F 1 "SW_Push" V 1455 3752 50  0000 R CNN
+F 2 "" H 1500 4000 50  0001 C CNN
+F 3 "~" H 1500 4000 50  0001 C CNN
+	1    1500 3800
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5800 3450 4450 3450
+$Comp
+L Device:R R?
+U 1 1 5DE8AE77
+P 3900 2850
+F 0 "R?" V 3693 2850 50  0000 C CNN
+F 1 "10kΩ" V 3784 2850 50  0000 C CNN
+F 2 "" V 3830 2850 50  0001 C CNN
+F 3 "~" H 3900 2850 50  0001 C CNN
+	1    3900 2850
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4050 2850 4450 2850
+Wire Wire Line
+	4450 2850 4450 3450
+Connection ~ 4450 3450
+Wire Wire Line
+	4450 3450 4400 3450
+Wire Wire Line
+	3750 2850 3200 2850
+Wire Wire Line
+	3200 2850 3200 4050
+Wire Wire Line
+	3200 4050 3400 4050
+Wire Wire Line
+	1500 3550 1500 3600
+Connection ~ 1500 3550
+Wire Wire Line
+	1500 4000 1500 4050
+Wire Wire Line
+	1500 4050 3200 4050
+Connection ~ 3200 4050
+$Comp
+L Device:C C?
+U 1 1 5DE9AAC9
+P 1000 3800
+F 0 "C?" H 1115 3846 50  0000 L CNN
+F 1 "100nF" H 1115 3755 50  0000 L CNN
+F 2 "" H 1038 3650 50  0001 C CNN
+F 3 "~" H 1000 3800 50  0001 C CNN
+	1    1000 3800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1000 3550 1000 3650
+Connection ~ 1000 3550
+Wire Wire Line
+	1000 3950 1000 4050
+Connection ~ 1500 4050
+Wire Wire Line
+	1000 3550 1500 3550
+Wire Wire Line
+	1000 4050 1500 4050
+Wire Wire Line
+	4400 3950 6700 3950
+Wire Wire Line
+	6700 3950 6700 5650
+Wire Wire Line
+	4250 5650 4250 5150
+Wire Wire Line
+	4250 5150 2850 5150
+Wire Wire Line
+	2850 5150 2850 3650
+Wire Wire Line
+	2850 3650 3400 3650
+Wire Wire Line
+	3400 3450 3300 3450
+Wire Wire Line
+	3300 3450 3300 3300
+Wire Wire Line
+	3300 3300 3000 3300
+Wire Wire Line
+	2500 2250 2500 1500
+Wire Wire Line
+	2500 1500 2250 1500
+Wire Wire Line
+	2300 2250 2300 2000
+Wire Wire Line
+	2300 2000 2250 2000
+Wire Wire Line
+	1500 3550 2300 3550
+Wire Wire Line
+	2600 4550 2300 4550
+Wire Wire Line
+	2300 4550 2300 3550
+Connection ~ 2600 4550
+Connection ~ 2300 3550
+Wire Wire Line
+	2300 3550 3400 3550
+Wire Wire Line
+	2300 3550 2300 3050
+Wire Wire Line
+	2500 3050 2500 3200
+Wire Wire Line
+	2500 3200 2600 3200
+Wire Wire Line
+	2600 3400 800  3400
+Wire Wire Line
+	800  3400 800  1500
+Text Notes 10600 7650 0    59   ~ 0
+2.5
+Text Notes 8200 7650 0    59   ~ 0
+5. 12. 2019
+Text Notes 7050 7100 0    79   ~ 0
+Adam Šmehýl
+Wire Wire Line
+	3000 1350 3500 1350
+Wire Wire Line
+	3500 1350 3500 1600
+Wire Wire Line
+	3000 2200 3500 2200
+Wire Wire Line
+	3500 2200 3500 1900
+Wire Wire Line
+	3500 1600 4600 1600
+Connection ~ 3500 1600
 $EndSCHEMATC
