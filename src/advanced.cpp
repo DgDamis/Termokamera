@@ -1,7 +1,7 @@
 #define SAVE70x70		//SD Image Capture - preference
 //#define SAVE8X8		//SD Image Capture - preference
-//#define USE_OTA		//Uncomment to enable OTA, remember to change WiFi credentials
-#define DEBUG			//Uncomment to enable DEBUG Mode - Serial line is initialized and debug messages sent out
+//define USE_OTA		//Uncomment to enable OTA, remember to change WiFi credentials
+#define DEBUG_MODE		//Uncomment to enable DEBUG Mode - Serial line is initialized and debug messages sent out
 
 /*
   Description:
@@ -18,26 +18,32 @@
 	2.1		DgDamis 		Critical bug fixes, full platformio support, better code typography 	[https://github.com/dgdamis/termokamera]
   Components:
   	MCU                       Wemos D1 Mini clone
-  	Display                   Ili9341
+  	Display                   ILI9341
   	Thermal sensor            AMG8833 	https://learn.adafruit.com/adafruit-amg8833-8x8-thermal-camera-sensor/overview  Alternatively you can buy a related sensor from Aliexpress										equations generated from  http://web-tech.ga-usa.com/2012/05/creating-a-custom-hot-to-cold-temperature-color-gradient-for-use-with-rrdtool/index.html
-  Pinouts:
-  	MCU         Device
-  	D1          AMG SDA
-  	D2          AMG SCL
-  	Gnd         Dispaly GND, AMG Gnd
-  	3v3         Dispaly Vcc,Display LED,Display RST, AMG Vcc
-  	D0          Dispaly T_IRQ
-  	D8          Display D/C
-  	D3          Display CS
-  	D7          Display SDI
-  	D6          Dispaly SDO
-  	D5          Display SCK
+  Pinouts [MCU]
+	TX
+	RX			Button - Capture Image interrupt
+  	D1          AMG8833 SDA
+  	D2          AMG8833 SCL
+	D3			ILI9341 DC
+	D4			ILI9341 T_IRQ (touch interrupt)
+	GND			AMG8833 GND, ILI9341 GND, Button (CI_INT logic), DC-DC Step up GND
+	5V			Powered by battery / battery charging (only when device is off)
+	3.3V		AMG8833 3V3, ILI9341 VCC + LED, Button (CI_INT logic) 
+	D8			Display CS
+	D7			ILI9341 MOSI (SDI), SD_MOSI
+	D6			ILI9341 MISO (SDO), SD_MISO
+	D5			ILI9341 SCK, SD_SCK
+	D0			SD_CS
+	A0			Battery measurement
+	RST			ILI9341 RESET
 */
+
 #ifdef USE_OTA
-#include <ESP8266WiFi.h>
-#include <ESP8266mDNS.h>
-#include <WiFiUdp.h>
-#include <ArduinoOTA.h>
+	#include <ESP8266WiFi.h>
+	#include <ESP8266mDNS.h>
+	#include <WiFiUdp.h>
+	#include <ArduinoOTA.h>
 #endif
 
 #include <TFT_eSPI.h>
@@ -47,17 +53,15 @@
 #include <Wire.h>
 #include <user_interface.h>
 
-
 #ifdef USE_OTA
-#warning Set your WiFi Passwords here!
-const char* ssid = "yourSSID";
-const char* password = "yourPass";
+	#warning Set your WiFi Passwords here!
+	const char* ssid = "yourSSID";
+	const char* password = "yourPass";
 #endif
 
-
-#define PIN_INT D4               //D0 Interrupt from touch for autoscale/scale
-uint64_t lastTouch_time = 0;
-bool scaleTemp_flag = false;
+#define PIN_INT D4					//D0 Interrupt from touch for temperature scaling
+uint64_t lastTouch_time = 0;		//Debounce catch
+bool scaleTemp_flag = false;		//Flag from interrupt to activate in loop
 
 // constants for the cute little keypad
 #define KEYPAD_TOP 15
@@ -68,7 +72,7 @@ bool scaleTemp_flag = false;
 #define BUTTON_SPACING_Y 10
 #define BUTTON_TEXTSIZE 2
 
-TFT_eSPI Display = TFT_eSPI();
+TFT_eSPI Display = TFT_eSPI();		//High speed SPI Connection
 
 // create some colors for the keypad buttons
 #define C_BLUE Display.color565(0,0,255)
@@ -80,12 +84,12 @@ TFT_eSPI Display = TFT_eSPI();
 #define C_DKGREY Display.color565(80,80,80)
 #define C_GREY Display.color565(127,127,127)
 
-// Added for measure Temp
+// Added for Center temperature measurement
 boolean measure = true;
-float centerTemp;
-unsigned long tempTime = millis();
-unsigned long tempTime2 = 0;
-unsigned long batteryTime = 1;
+double_t centerTemp;
+uint32_t tempTime = millis();
+uint32_t tempTime2 = 0;
+uint32_t batteryTime = 1;
 
 // create some text for the keypad butons
 char KeyPadBtnText[12][5] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "Done", "0", "Clr" };
