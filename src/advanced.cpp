@@ -98,17 +98,15 @@ char KeyPadBtnText[12][5] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "Done
 uint16_t KeyPadBtnColor[12] = { C_BLUE, C_BLUE, C_BLUE, C_BLUE, C_BLUE, C_BLUE, C_BLUE, C_BLUE, C_BLUE, C_GREEN, C_BLUE, C_RED };
 
 // start with some initial colors
-//#warning Changed uint16_t to float here!
 float MinTemp = 25.0;
 float MaxTemp = 35.0;
-
 
 // variables for interpolated colors
 byte red, green, blue;
 
 // variables for row/column interpolation
 byte i, j, k, row, col, incr;
-float intPoint, val, a, b, c, d, ii;
+double_t intPoint, val, a, b, c, d, ii;
 byte aLow, aHigh;
 
 // size of a display "pixel"
@@ -143,30 +141,28 @@ Adafruit_AMG88xx ThermalSensor;
 Sd2Card card;
 SdVolume volume;
 SdFile root;
-const int sd_ss = D0;
+constexpr int sd_ss = D0;
 /*
-const int sd_miso = D6;
-const int sd_mosi = D7;
-const int sd_clock = D5;
+constexpr int sd_miso = D6;
+constexpr int sd_mosi = D7;
+constexpr int sd_clock = D5;
 */
 
 SDLib::File image_file;
-bool SD_present = 0;
-unsigned long last_image_time = 0;
-
+boolean SD_present = 0;
+uint32_t last_image_time = 0;
 
 //Capture Image Button
-const int capture_button = GPIO_ID_PIN(3);
+constexpr int capture_button = GPIO_ID_PIN(3);
 uint64_t lastPress = 0;
 volatile bool get_image = 0;
 volatile unsigned long last_image = 0;
 
 //Debug timer
-uint64_t pinCheck_timer = 0;
+uint32_t pinCheck_timer = 0;
 
-// interplation function to create 70 columns for 8 rows
+// interpolation function to create 70 columns for 8 rows
 void InterpolateRows() {
-
 	// interpolate the 8 rows (interpolate the 70 column points between the 8 sensor pixels first)
 	for (row = 0; row < 8; row++) {
 		for (col = 0; col < 70; col++) {
@@ -185,12 +181,11 @@ void InterpolateRows() {
 			// store in the 70 x 70 array
 			// since display is pointing away, reverse row to transpose row data
 			HDTemp[(7 - row) * 10][col] = val;
-
 		}
 	}
 }
 
-// interplation function to interpolate 70 columns from the interpolated rows
+// interpolation function to interpolate 70 columns from the interpolated rows
 void InterpolateCols() {
 	// then interpolate the 70 rows between the 8 sensor points
 	for (col = 0; col < 70; col++) {
@@ -213,7 +208,7 @@ void InterpolateCols() {
 	}
 }
 
-//Sets variable after button was pressed
+// Interrupt function to set FLAG to capture image
 void ICACHE_RAM_ATTR capture_image_isr() {
 	if(lastPress+50 < millis()){
 		Serial.println(F("Image Capture Button Initiated."));
@@ -223,7 +218,7 @@ void ICACHE_RAM_ATTR capture_image_isr() {
 		lastPress = millis();
 	}
 }
-
+// Interrupt function to set FLAG to trigger scaling
 void ICACHE_RAM_ATTR trigger_scale_isr() {
 	if(lastTouch_time+50 < millis() && millis() > 5000){
 		Serial.print(F("Touch Interrupt Function Initiated."));
@@ -232,8 +227,7 @@ void ICACHE_RAM_ATTR trigger_scale_isr() {
 	}
 }
 
-
-// my fast yet effective color interpolation routine
+// fast yet effective color interpolation routine
 uint16_t GetColor(float val) {
 
 	/*
@@ -279,7 +273,6 @@ void DisplayGradient() {
 
 	// rip through 70 rows
 	for (row = 0; row < 70; row++) {
-
 		// fast way to draw a non-flicker grid--just make every 10 pixels 2x2 as opposed to 3x3
 		// drawing lines after the grid will just flicker too much
 		if (ShowGrid < 0) {
@@ -331,8 +324,7 @@ void Getabcd() {
 
 // function to draw a cute little legend
 void DrawLegend() {
-
-	// my cute little color legend with max and min text
+	// cute little color legend with max and min text
 	j = 0;
 
 	float inc = (MaxTemp - MinTemp) / 220.0;
@@ -519,72 +511,6 @@ void print_sd_info() {
 	root.ls(LS_R | LS_DATE | LS_SIZE);
 }
 
-
-#ifdef USE_OTA
-void ota_start() {
-	ArduinoOTA.onStart([]() {
-		String type;
-		if (ArduinoOTA.getCommand() == U_FLASH) {
-			type = "sketch";
-		}
-		else { // U_SPIFFS
-			type = "filesystem";
-		}
-
-		// NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-		Serial.println("Start updating " + type);
-	});
-	ArduinoOTA.onEnd([]() {
-		Serial.println("\nEnd");
-	});
-	ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-		Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-		Display.setCursor(0, 140);
-		Display.setTextColor(TFT_GREEN, TFT_BLACK);
-		Display.printf("Progress: %u%%\r", (progress / (total / 100)));
-	});
-	ArduinoOTA.onError([](ota_error_t error) {
-		Serial.printf("Error[%u]: ", error);
-		if (error == OTA_AUTH_ERROR) {
-			Serial.println("Auth Failed");
-		}
-		else if (error == OTA_BEGIN_ERROR) {
-			Serial.println("Begin Failed");
-		}
-		else if (error == OTA_CONNECT_ERROR) {
-			Serial.println("Connect Failed");
-		}
-		else if (error == OTA_RECEIVE_ERROR) {
-			Serial.println("Receive Failed");
-		}
-		else if (error == OTA_END_ERROR) {
-			Serial.println("End Failed");
-		}
-	});
-	ArduinoOTA.begin();
-
-	Serial.println("Ready");
-	Serial.print("IP address: ");
-	Serial.println(WiFi.localIP());
-
-	Display.fillScreen(C_BLACK);
-	Display.setTextFont(4);
-	Display.setTextSize(1);
-	Display.setTextColor(TFT_RED);
-	Display.setCursor(0, 0);
-	Display.println("OTA-Update!");
-	Display.println("\nIP:\n");
-	Display.println(WiFi.localIP());
-
-	while (true)
-	{
-		ArduinoOTA.handle();
-		delay(10);
-	}
-}
-#endif
-
-
 //Saves the image to SD Card
 void save_image_sd() {
 
@@ -673,14 +599,81 @@ void capture_image() {
 	SPI.setFrequency(80000000L);
 }
 
+
+#ifdef USE_OTA
+	void ota_start() {
+		ArduinoOTA.onStart([]() {
+			String type;
+			if (ArduinoOTA.getCommand() == U_FLASH) {
+				type = "sketch";
+			}
+			else { // U_SPIFFS
+				type = "filesystem";
+			}
+
+			// NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+			Serial.println("Start updating " + type);
+		});
+		ArduinoOTA.onEnd([]() {
+			Serial.println("\nEnd");
+		});
+		ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+			Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+			Display.setCursor(0, 140);
+			Display.setTextColor(TFT_GREEN, TFT_BLACK);
+			Display.printf("Progress: %u%%\r", (progress / (total / 100)));
+		});
+		ArduinoOTA.onError([](ota_error_t error) {
+			Serial.printf("Error[%u]: ", error);
+			if (error == OTA_AUTH_ERROR) {
+				Serial.println("Auth Failed");
+			}
+			else if (error == OTA_BEGIN_ERROR) {
+				Serial.println("Begin Failed");
+			}
+			else if (error == OTA_CONNECT_ERROR) {
+				Serial.println("Connect Failed");
+			}
+			else if (error == OTA_RECEIVE_ERROR) {
+				Serial.println("Receive Failed");
+			}
+			else if (error == OTA_END_ERROR) {
+				Serial.println("End Failed");
+			}
+		});
+		ArduinoOTA.begin();
+
+		Serial.println("Ready");
+		Serial.print("IP address: ");
+		Serial.println(WiFi.localIP());
+
+		Display.fillScreen(C_BLACK);
+		Display.setTextFont(4);
+		Display.setTextSize(1);
+		Display.setTextColor(TFT_RED);
+		Display.setCursor(0, 0);
+		Display.println("OTA-Update!");
+		Display.println("\nIP:\n");
+		Display.println(WiFi.localIP());
+
+		while (true)
+		{
+			ArduinoOTA.handle();
+			delay(10);
+		}
+	}
+#endif
+
+
 void setup() {
 	pinMode(TFT_DC, OUTPUT);
 	pinMode(sd_ss, OUTPUT);
 	pinMode(capture_button, INPUT);
 	pinMode(PIN_INT,INPUT);
 	// Button Image Capture - Interrupt
-	attachInterrupt(digitalPinToInterrupt(capture_button), capture_image_isr, FALLING); //D0 cant be used for interrupts :(
-	attachInterrupt(digitalPinToInterrupt(PIN_INT),trigger_scale_isr, CHANGE); 
+	attachInterrupt(digitalPinToInterrupt(capture_button), capture_image_isr, FALLING); //D0 cant be used for interrupts :( --> Moved to RX
+	// Touch Interrupt
+	attachInterrupt(digitalPinToInterrupt(PIN_INT),trigger_scale_isr, CHANGE); // --> Attached to D4
 
 	// Set A0 to input for battery measurement
 	pinMode(A0, INPUT);
@@ -738,7 +731,7 @@ void setup() {
 		Display.setTextColor(C_GREEN, C_BLACK);
 		Display.print("Sensor: FOUND");
 	}
-
+	
 	// read the camera for initial testing
 	ThermalSensor.readPixels(pixels);
 
@@ -766,36 +759,35 @@ void setup() {
 		Display.setTextFont(4);
 		Display.setTextColor(C_RED, C_BLACK);
 		Display.setTextSize(1);
-
- #ifdef USE_OTA
-		Display.println("HOLD CAPTURE \nBUTTON FOR OTA!");
-				delay(2000);
-				//Check for capture button and start OTA if it is pressed for at least one second
-				if (digitalRead(capture_button) == 0) {
-					unsigned long ota_press_time = millis();
-					while (digitalRead(capture_button) == 0 && (millis() - ota_press_time) < 1000) {
-						;
-					}
-					//Check if button is still pressed
-					if (digitalRead(capture_button) == 0) {
-						system_update_cpu_freq(80000000L);
-						//Start OTA
-						WiFi.mode(WIFI_STA);
-						WiFi.begin(ssid, password);
-						while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-							Serial.println("Connection Failed! Running normal program.");
-							Display.fillScreen(C_BLACK);
-							Display.println("Connection Failed! Running normal program.");
-						}
-						ArduinoOTA.setPort(8266);
-						ArduinoOTA.setHostname("ThermalCamera_ESP8266");
-						ota_start();
-					}
-				}
- #endif
-
-		
 	}
+	//delay(1000);
+
+	#ifdef USE_OTA
+			Display.println("HOLD CAPTURE \nBUTTON FOR OTA!");
+					delay(2000);
+					//Check for capture button and start OTA if it is pressed for at least one second
+					if (digitalRead(capture_button) == 0) {
+						unsigned long ota_press_time = millis();
+						while (digitalRead(capture_button) == 0 && (millis() - ota_press_time) < 1000) {
+							;
+						}
+						//Check if button is still pressed
+						if (digitalRead(capture_button) == 0) {
+							system_update_cpu_freq(80000000L);
+							//Start OTA
+							WiFi.mode(WIFI_STA);
+							WiFi.begin(ssid, password);
+							while (WiFi.waitForConnectResult() != WL_CONNECTED) {
+								Serial.println("Connection Failed! Running normal program.");
+								Display.fillScreen(C_BLACK);
+								Display.println("Connection Failed! Running normal program.");
+							}
+							ArduinoOTA.setPort(8266);
+							ArduinoOTA.setHostname("ThermalCamera_ESP8266");
+							ota_start();
+						}
+					}
+	#endif
 
 	SPI.setFrequency(80000000L);
 	Display.fillScreen(C_BLACK);
@@ -809,21 +801,15 @@ void setup() {
 
 	// draw a large white border for the temperature area
 	Display.fillRect(10, 10, 220, 220, C_WHITE);
-
-
 }
 
 void loop() {
-
 	if (get_image) {	//Capture Image
 		Serial.println("image");
-
 		capture_image();
-
 		last_image = millis();
 		get_image = 0;
 	}
-
 	if (scaleTemp_flag) {
 		Serial.println(F("Touch Initiated in loop!"));
 		SetTempScale();
@@ -853,8 +839,7 @@ void loop() {
 	// display the 70 x 70 array
 	DisplayGradient();
 	
-
-	// Update battery everx 30s
+	// Update battery every 30s
 	if (batteryTime < millis()) {
 		drawBattery();
 		batteryTime = millis() + 500;
