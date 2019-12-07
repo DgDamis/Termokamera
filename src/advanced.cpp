@@ -211,7 +211,9 @@ void InterpolateCols() {
 // Interrupt function to set FLAG to capture image
 void ICACHE_RAM_ATTR capture_image_isr() {
 	if(lastPress+50 < millis()){
-		Serial.println(F("Image Capture Button Initiated."));
+		#ifdef DEBUG_MODE
+			Serial.println(F("Image Capture Button Initiated."));
+		#endif
 		if (millis() - last_image >= 400) {
 			get_image = 1;
 		}
@@ -220,8 +222,10 @@ void ICACHE_RAM_ATTR capture_image_isr() {
 }
 // Interrupt function to set FLAG to trigger scaling
 void ICACHE_RAM_ATTR trigger_scale_isr() {
-	if(lastTouch_time+50 < millis() && millis() > 5000){
-		Serial.print(F("Touch Interrupt Function Initiated."));
+	if(lastTouch_time+500 < millis() && millis() > 5000){
+		#ifdef DEBUG_MODE
+			Serial.print(F("Touch Interrupt Function Initiated."));
+		#endif
 		lastTouch_time = millis();
 		scaleTemp_flag = true;
 	}
@@ -351,7 +355,6 @@ void DrawLegend() {
 	//  Display.fillRect(233, 215, 94, 55, C_BLACK);
 	//  Display.setFont(Arial_14);
 	Display.print(MaxTemp);
-
 	Display.setTextFont(NULL);
 }
 
@@ -450,79 +453,87 @@ void drawBattery() {
 
 void print_sd_info() {
 	if (!card.init(SPI_FULL_SPEED, sd_ss)) {
-		Serial.println("initialization failed. Things to check:");
-		Serial.println("* is a card inserted?");
-		Serial.println("* is your wiring correct?");
-		Serial.println("* did you change the chipSelect pin to match your shield or module?");
+		#ifdef DEBUG_MODE
+			Serial.println("initialization failed. Things to check:");
+			Serial.println("* is a card inserted?");
+			Serial.println("* is your wiring correct?");
+			Serial.println("* did you change the chipSelect pin to match your shield or module?");
+		#endif
 		SD_present = 0;
 		return;
 	}
 	else {
 		SD_present = 1;
-		Serial.println("Wiring is correct and a card is present.");
+		#ifdef DEBUG_MODE
+			Serial.println("Wiring is correct and a card is present.");
+		#endif
 	}
-
-	// print the type of card
-	Serial.print("\nCard type: ");
-	switch (card.type()) {
-	case SD_CARD_TYPE_SD1:
-		Serial.println("SD1");
-		break;
-	case SD_CARD_TYPE_SD2:
-		Serial.println("SD2");
-		break;
-	case SD_CARD_TYPE_SDHC:
-		Serial.println("SDHC");
-		break;
-	default:
-		Serial.println("Unknown");
-	}
-
+	#ifdef DEBUG_MODE
+		// print the type of card
+		Serial.print("\nCard type: ");
+		switch (card.type()) {
+		case SD_CARD_TYPE_SD1:
+			Serial.println("SD1");
+			break;
+		case SD_CARD_TYPE_SD2:
+			Serial.println("SD2");
+			break;
+		case SD_CARD_TYPE_SDHC:
+			Serial.println("SDHC");
+			break;
+		default:
+			Serial.println("Unknown");
+		}
+	#endif
 	// Now we will try to open the 'volume'/'partition' - it should be FAT16 or FAT32
 	if (!volume.init(card)) {
-		Serial.println("Could not find FAT16/FAT32 partition.\nMake sure you've formatted the card");
+		#ifdef DEBUG_MODE
+			Serial.println("Could not find FAT16/FAT32 partition.\nMake sure you've formatted the card");
+		#endif
 		return;
 	}
+	#ifdef DEBUG_MODE
+		// print the type and size of the first FAT-type volume
+		uint32_t volumesize;
+		Serial.print("\nVolume type is FAT");
+		Serial.println(volume.fatType(), DEC);
+		Serial.println();
 
-
-	// print the type and size of the first FAT-type volume
-	uint32_t volumesize;
-	Serial.print("\nVolume type is FAT");
-	Serial.println(volume.fatType(), DEC);
-	Serial.println();
-
-	volumesize = volume.blocksPerCluster();    // clusters are collections of blocks
-	volumesize *= volume.clusterCount();       // we'll have a lot of clusters
-	volumesize *= 512;                            // SD card blocks are always 512 bytes
-	Serial.print("Volume size (bytes): ");
-	Serial.println(volumesize);
-	Serial.print("Volume size (Kbytes): ");
-	volumesize /= 1024;
-	Serial.println(volumesize);
-	Serial.print("Volume size (Mbytes): ");
-	volumesize /= 1024;
-	Serial.println(volumesize);
-
-
-	Serial.println("\nFiles found on the card (name, date and size in bytes): ");
+		volumesize = volume.blocksPerCluster();    // clusters are collections of blocks
+		volumesize *= volume.clusterCount();       // we'll have a lot of clusters
+		volumesize *= 512;                            // SD card blocks are always 512 bytes
+		Serial.print("Volume size (bytes): ");
+		Serial.println(volumesize);
+		Serial.print("Volume size (Kbytes): ");
+		volumesize /= 1024;
+		Serial.println(volumesize);
+		Serial.print("Volume size (Mbytes): ");
+		volumesize /= 1024;
+		Serial.println(volumesize);
+	
+		Serial.println("\nFiles found on the card (name, date and size in bytes): ");
+	#endif
 	root.openRoot(volume);
-
-	// list all files in the card with date and size
-	root.ls(LS_R | LS_DATE | LS_SIZE);
+	#ifdef DEBUG_MODE
+		// list all files in the card with date and size
+		root.ls(LS_R | LS_DATE | LS_SIZE);
+	#endif
 }
 
 //Saves the image to SD Card
 void save_image_sd() {
-
-	Serial.println(F("Initializing SD card..."));
-
+	#ifdef DEBUG_MODE
+		Serial.println(F("Initializing SD card..."));
+	#endif
 	//See if the card is present and can be initialized:
 	if (!SD.begin(sd_ss, SPI_FULL_SPEED)) {
-		Serial.println(F("  SD card failed, or not present!"));
+		#ifdef DEBUG_MODE
+			Serial.println(F("  SD card failed, or not present!"));
+		#endif
 	}
-
-	Serial.println(F("  SD card initialized."));
-
+	#ifdef DEBUG_MODE
+		Serial.println(F("  SD card initialized."));
+	#endif
 	// Pick a numbered filename, 00 to 99.
 	char filename[15] = "image_##.txt";
 
@@ -537,14 +548,17 @@ void save_image_sd() {
 
 	image_file = SD.open(filename, FILE_WRITE);
 	if (!image_file) {
-		Serial.print(F("Couldn't create "));
-		Serial.println(filename);
+		#ifdef DEBUG_MODE
+			Serial.print(F("Couldn't create "));
+			Serial.println(filename);
+		#endif
 
 	}
 	else {
-		Serial.print(F("Writing to "));
-		Serial.println(filename);
-
+		#ifdef DEBUG_MODE
+			Serial.print(F("Writing to "));
+			Serial.println(filename);
+		#endif
 
 		//Save 8x8 Image to SD Card
  #ifdef SAVE8X8
@@ -588,11 +602,15 @@ void save_image_sd() {
 void capture_image() {
 	//print_sd_info();
 	if (SD_present) {
-		Serial.println("Starting Image Capture!");
+		#ifdef DEBUG_MODE
+			Serial.println("Starting Image Capture!");
+		#endif
 		save_image_sd();
 	}
 	else {
-		Serial.println("No SD Card!");
+		#ifdef DEBUG_MODE
+			Serial.println("No SD Card!");
+		#endif
 	}
 	//Running this command ensures a high framerate after taking an image
 	//If you have problems while saving to the SD you might want to change "SPI_FULL_SPEED" to "SPI_HALF_SPEED" in save_image() or decrease the SPI Clock rate
@@ -612,41 +630,49 @@ void capture_image() {
 			}
 
 			// NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-			Serial.println("Start updating " + type);
+			#ifdef DEBUG_MODE
+				Serial.println("Start updating " + type);
+			#endif
 		});
 		ArduinoOTA.onEnd([]() {
-			Serial.println("\nEnd");
+			#ifdef DEBUG_MODE
+				Serial.println("\nEnd");
+			#endif
 		});
 		ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-			Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+			#ifdef DEBUG_MODE
+				Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+			#endif
 			Display.setCursor(0, 140);
 			Display.setTextColor(TFT_GREEN, TFT_BLACK);
 			Display.printf("Progress: %u%%\r", (progress / (total / 100)));
 		});
 		ArduinoOTA.onError([](ota_error_t error) {
-			Serial.printf("Error[%u]: ", error);
-			if (error == OTA_AUTH_ERROR) {
-				Serial.println("Auth Failed");
-			}
-			else if (error == OTA_BEGIN_ERROR) {
-				Serial.println("Begin Failed");
-			}
-			else if (error == OTA_CONNECT_ERROR) {
-				Serial.println("Connect Failed");
-			}
-			else if (error == OTA_RECEIVE_ERROR) {
-				Serial.println("Receive Failed");
-			}
-			else if (error == OTA_END_ERROR) {
-				Serial.println("End Failed");
-			}
+			#ifdef DEBUG_MODE
+				Serial.printf("Error[%u]: ", error);
+				if (error == OTA_AUTH_ERROR) {
+					Serial.println("Auth Failed");
+				}
+				else if (error == OTA_BEGIN_ERROR) {
+					Serial.println("Begin Failed");
+				}
+				else if (error == OTA_CONNECT_ERROR) {
+					Serial.println("Connect Failed");
+				}
+				else if (error == OTA_RECEIVE_ERROR) {
+					Serial.println("Receive Failed");
+				}
+				else if (error == OTA_END_ERROR) {
+					Serial.println("End Failed");
+				}
+			#endif
 		});
 		ArduinoOTA.begin();
-
-		Serial.println("Ready");
-		Serial.print("IP address: ");
-		Serial.println(WiFi.localIP());
-
+		#ifdef DEBUG_MODE
+			Serial.println("Ready");
+			Serial.print("IP address: ");
+			Serial.println(WiFi.localIP());
+		#endif
 		Display.fillScreen(C_BLACK);
 		Display.setTextFont(4);
 		Display.setTextSize(1);
@@ -668,23 +694,24 @@ void capture_image() {
 void setup() {
 	pinMode(TFT_DC, OUTPUT);
 	pinMode(sd_ss, OUTPUT);
+	#ifdef DEBUG_MODE
+		Serial.begin(9600);
+	#endif
 	pinMode(capture_button, INPUT);
 	pinMode(PIN_INT,INPUT);
 	// Button Image Capture - Interrupt
 	attachInterrupt(digitalPinToInterrupt(capture_button), capture_image_isr, FALLING); //D0 cant be used for interrupts :( --> Moved to RX
 	// Touch Interrupt
-	attachInterrupt(digitalPinToInterrupt(PIN_INT),trigger_scale_isr, CHANGE); // --> Attached to D4
+	attachInterrupt(digitalPinToInterrupt(PIN_INT),trigger_scale_isr, FALLING); // --> Attached to D4
 
 	// Set A0 to input for battery measurement
-	pinMode(A0, INPUT);
-
-	Serial.begin(9600);
-	
+	pinMode(A0, INPUT);	
 
 	//Start the display and set the background to black
 	SPI.begin();
-
-	Serial.println("\nInitializing SD card...");
+	#ifdef DEBUG_MODE
+		Serial.println("\nInitializing SD card...");
+	#endif
 	print_sd_info();
 
 	SPI.setFrequency(80000000L);
@@ -763,7 +790,9 @@ void setup() {
 	//delay(1000);
 
 	#ifdef USE_OTA
-			Display.println("HOLD CAPTURE \nBUTTON FOR OTA!");
+			#ifdef DEBUG_MODE
+				Display.println("HOLD CAPTURE \nBUTTON FOR OTA!");
+			#endif
 					delay(2000);
 					//Check for capture button and start OTA if it is pressed for at least one second
 					if (digitalRead(capture_button) == 0) {
@@ -778,9 +807,13 @@ void setup() {
 							WiFi.mode(WIFI_STA);
 							WiFi.begin(ssid, password);
 							while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-								Serial.println("Connection Failed! Running normal program.");
+								#ifdef DEBUG_MODE
+									Serial.println("Connection Failed! Running normal program.");
+								#endif
 								Display.fillScreen(C_BLACK);
-								Display.println("Connection Failed! Running normal program.");
+								#ifdef DEBUG_MODE
+									Display.println("Connection Failed! Running normal program.");
+								#endif
 							}
 							ArduinoOTA.setPort(8266);
 							ArduinoOTA.setHostname("ThermalCamera_ESP8266");
@@ -805,13 +838,14 @@ void setup() {
 
 void loop() {
 	if (get_image) {	//Capture Image
-		Serial.println("image");
+		#ifdef DEBUG_MODE
+			Serial.println("Capturing Image Data.");
+		#endif
 		capture_image();
 		last_image = millis();
 		get_image = 0;
 	}
 	if (scaleTemp_flag) {
-		Serial.println(F("Touch Initiated in loop!"));
 		SetTempScale();
 		scaleTemp_flag = false;
 		if (millis() - tempTime > 2000) {
@@ -856,8 +890,11 @@ void loop() {
 		capture_image();
 	}
 	*/
-	if(pinCheck_timer + 2000 < millis()){
-		Serial.printf("Touch Pin State: %d \n", digitalRead(PIN_INT));
-		pinCheck_timer = millis();
-	}
+	#ifdef DEBUG_MODE
+		if(pinCheck_timer + 2000 < millis()){
+			Serial.printf("Touch Pin State: %d \n", digitalRead(PIN_INT));
+			Serial.printf("Capture Image Button: %d \n", digitalRead(capture_button));
+			pinCheck_timer = millis();
+		}
+	#endif
 }
