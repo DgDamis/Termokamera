@@ -285,7 +285,7 @@ Wire Wire Line
 Wire Wire Line
 	4250 5150 2850 5150
 Wire Wire Line
-	2850 5150 2850 3650
+	2850 5150 2850 3700
 Wire Wire Line
 	2850 3650 3400 3650
 Wire Wire Line
@@ -307,7 +307,7 @@ Wire Wire Line
 Wire Wire Line
 	2600 4550 2300 4550
 Wire Wire Line
-	2300 4550 2300 3550
+	2300 4550 2300 3700
 Connection ~ 2600 4550
 Connection ~ 2300 3550
 Wire Wire Line
@@ -323,9 +323,9 @@ Wire Wire Line
 Wire Wire Line
 	800  3400 800  1500
 Text Notes 10600 7650 0    59   ~ 0
-2.5
+2.6
 Text Notes 8200 7650 0    59   ~ 0
-5. 12. 2019
+7. 12. 2019
 Text Notes 7050 7100 0    79   ~ 0
 Adam Šmehýl
 Wire Wire Line
@@ -339,4 +339,25 @@ Wire Wire Line
 Wire Wire Line
 	3500 1600 4600 1600
 Connection ~ 3500 1600
+$Comp
+L Device:R R?
+U 1 1 5DEBCE4E
+P 2550 3700
+F 0 "R?" V 2343 3700 50  0000 C CNN
+F 1 "10kΩ" V 2434 3700 50  0000 C CNN
+F 2 "" V 2480 3700 50  0001 C CNN
+F 3 "~" H 2550 3700 50  0001 C CNN
+	1    2550 3700
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2700 3700 2850 3700
+Connection ~ 2850 3700
+Wire Wire Line
+	2850 3700 2850 3650
+Wire Wire Line
+	2400 3700 2300 3700
+Connection ~ 2300 3700
+Wire Wire Line
+	2300 3700 2300 3550
 $EndSCHEMATC
