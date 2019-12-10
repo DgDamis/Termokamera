@@ -409,46 +409,61 @@ void drawMeasurement() {
 	}	
 }
 
+/*
 int measureBattery() {
 	uint16_t adcValue = analogRead(A0);
 	int volt = ((3.3 * adcValue) / 1023);
 	volt = (volt * 61) / 10;
-	/*Serial.println(adcValue);
-	Serial.println(volt);*/
-	/*Display.setCursor(128, 235);
+	//Serial.println(adcValue);
+	//Serial.println(volt);
+	Display.setCursor(128, 235);
 	Display.setTextColor(TFT_BLUE, ILI9341_BLACK);
-	Display.println(adcValue);*/
-
+	Display.println(adcValue);
 	return volt;
 }
-
 // Draw battery symbol (I have disabled it)
 void drawBattery() {
-	//int volt = measureBattery(); // range from 3.2V - 4.2V
-	///*volt = max(volt, 1);
-	//volt = min(volt, 10);*/
-	///*Serial.print("Battery: ");
-	//Serial.println(volt);*/
-	///*if (volt < 32) volt = 32;
-	//else if (volt > 42) volt = 42;*/
+	int volt = measureBattery(); // range from 3.2V - 4.2V
+	volt = max(volt, 1);
+	volt = min(volt, 10);
+	//Serial.print("Battery: ");
+	//Serial.println(volt);
+	if (volt < 32) volt = 32;
+	else if (volt > 42) volt = 42;
 
-	//int battery_meter = map(volt, 32, 42, 2, 28);
-
-
+	int battery_meter = map(volt, 32, 42, 2, 28);
 	//// draw battery
-	//Display.drawRect(204, 301, 30, 10, C_WHITE);	//Frame
-	//Display.fillRect(201, 303, 3, 6, C_WHITE);		//Contact
+	Display.drawRect(204, 301, 30, 10, C_WHITE);	//Frame
+	Display.fillRect(201, 303, 3, 6, C_WHITE);		//Contact
 
-	//
+	Display.fillRect(205 + 28 - battery_meter, 302 , battery_meter, 8, TFT_GREEN);
+	Display.fillRect(205, 302, 28 - battery_meter, 8, TFT_BLACK);		//delete old
 
-	//Display.fillRect(205 + 28 - battery_meter, 302 , battery_meter, 8, TFT_GREEN);
-	//Display.fillRect(205, 302, 28 - battery_meter, 8, TFT_BLACK);		//delete old
+	float display_voltage = float(volt) / float(10);
 
-	//float display_voltage = float(volt) / float(10);
+	Display.setCursor(78, 235);
+	Display.setTextColor(TFT_CYAN, ILI9341_BLACK);
+	Display.println(display_voltage);
+}
+*/
 
-	//Display.setCursor(78, 235);
-	//Display.setTextColor(TFT_CYAN, ILI9341_BLACK);
-	//Display.println(display_voltage);
+int measureBattery() {
+  uint16_t adcValue = analogRead(A0);
+  int volt = adcValue / 102.3 * 4.5;// Using 130kOhm resistor
+  return volt;
+}
+
+// Draw battery symbol
+void drawBattery()  {
+  int volt = measureBattery() - 32; // range from 3.2V - 4.2V
+  volt = constrain (volt, 1, 10);
+
+  // draw battery
+  Display.drawRect(198, 304, 30, 10, C_WHITE);
+  Display.fillRect(227, 306, 3, 6, C_WHITE);
+  Display.fillRect(199, 305, 28, 8, C_BLACK);
+  if (volt > 3)Display.fillRect(199, 305, volt * 3 - 2 , 8, C_GREEN);
+  else Display.fillRect(199, 305, volt * 3 - 2, 8, C_RED);
 }
 
 void print_sd_info() {
@@ -787,7 +802,7 @@ void setup() {
 		Display.setTextColor(C_RED, C_BLACK);
 		Display.setTextSize(1);
 	}
-	//delay(1000);
+	delay(2000);
 
 	#ifdef USE_OTA
 			#ifdef DEBUG_MODE
@@ -822,7 +837,7 @@ void setup() {
 					}
 	#endif
 
-	SPI.setFrequency(80000000L);
+	//SPI.setFrequency(80000000L);
 	Display.fillScreen(C_BLACK);
 
 	// get the cutoff points for the color interpolation routines
@@ -891,7 +906,7 @@ void loop() {
 	}
 	*/
 	#ifdef DEBUG_MODE
-		if(pinCheck_timer + 2000 < millis()){
+		if(pinCheck_timer + 5000 < millis()){
 			Serial.printf("Touch Pin State: %d \n", digitalRead(PIN_INT));
 			Serial.printf("Capture Image Button: %d \n", digitalRead(capture_button));
 			pinCheck_timer = millis();
