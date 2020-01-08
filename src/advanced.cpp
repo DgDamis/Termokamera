@@ -85,7 +85,7 @@ TFT_eSPI Display = TFT_eSPI();		//High speed SPI Connection
 #define C_GREY Display.color565(127,127,127)
 
 // Added for Center temperature measurement
-boolean measure = true;
+bool measure = true;
 double_t centerTemp;
 uint32_t tempTime = millis();
 uint32_t tempTime2 = 0;
@@ -149,7 +149,7 @@ constexpr int sd_clock = D5;
 */
 
 SDLib::File image_file;
-boolean SD_present = 0;
+bool SD_present = 0;
 uint32_t last_image_time = 0;
 
 //Capture Image Button
@@ -629,10 +629,54 @@ void capture_image() {
 	}
 	//Running this command ensures a high framerate after taking an image
 	//If you have problems while saving to the SD you might want to change "SPI_FULL_SPEED" to "SPI_HALF_SPEED" in save_image() or decrease the SPI Clock rate
+	//! It may cause problems
 	SPI.setFrequency(80000000L);
 }
 
+void rotateSensorData(){
+	constexpr uint16_t row = 70;
+	constexpr uint16_t col = 70;
+	//transpose
+	for(uint16_t r = 0; r < row; r++) {
+		for(uint16_t c = r; c < col; c++) {  
+			std::swap(HDTemp[r][c], HDTemp[c][r]);
+		}
+	}
+	//reverse elements on row order
+	for(uint16_t r = 0; r < row; r++) {
+		for(uint16_t c = 0; c < col/2; c++) {
+			std::swap(HDTemp[r][c], HDTemp[row][col-c-1]);
+		}
+	}
+}
 
+// After transpose we swap elements of column 
+// one by one for finding left rotation of matrix 
+// by 90 degree 
+void reverseColumns(){
+	uint16_t R = 70;
+	uint16_t C = 70;
+    for (int i = 0; i < C; i++) 
+        for (int j = 0, k = C - 1; j < k; j++, k--) 
+            std::swap(HDTemp[j][i], HDTemp[k][i]); 
+} 
+  
+// Function for do transpose of matrix 
+void transpose() {
+	uint16_t R = 70;
+	uint16_t C = 70;
+    for (int i = 0; i < R; i++) 
+        for (int j = i; j < C; j++) 
+            std::swap(HDTemp[i][j], HDTemp[j][i]); 
+} 
+
+// Function to anticlockwise rotate matrix 
+// by 90 degree 
+void rotate90(){ 
+    transpose(); 
+    reverseColumns(); 
+} 
+  
 #ifdef USE_OTA
 	void ota_start() {
 		ArduinoOTA.onStart([]() {
@@ -802,7 +846,7 @@ void setup() {
 		Display.setTextColor(C_RED, C_BLACK);
 		Display.setTextSize(1);
 	}
-	delay(2000);
+	delay(500);
 
 	#ifdef USE_OTA
 			#ifdef DEBUG_MODE
@@ -875,7 +919,6 @@ void loop() {
 
 	// read the sensor
 	ThermalSensor.readPixels(pixels);
-
 	// now that we have an 8 x 8 sensor array
 	// interpolate to get a bigger screen
 	InterpolateRows();
@@ -884,6 +927,11 @@ void loop() {
 	// interpolate each of the 70 columns
 	// forget Arduino..no where near fast enough..Teensy at > 72 mhz is the starting point
 	InterpolateCols();
+	//? Optimalizovat
+	rotate90();
+	rotate90();
+	rotate90();
+	//! rotateSensorData();
 	drawMeasurement();
 	// display the 70 x 70 array
 	DisplayGradient();
