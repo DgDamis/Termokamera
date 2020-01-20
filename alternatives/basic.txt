@@ -53,7 +53,7 @@
 #include <Adafruit_ILI9341.h>
 #include <Adafruit_AMG88xx.h>       // thermal camera lib
 
-#define PIN_INT D0                      // Interrupt from touch for autoscale/scale
+#define PIN_INT D4                     // Interrupt from touch for autoscale/scale
 
 // constants for the cute little keypad
 #define KEYPAD_TOP 15
@@ -440,8 +440,8 @@ void drawBattery()  {
 
 // end of code
 void setup() {
-
-  Serial.begin(115200);
+  Serial.begin(9600);
+  SPI.setFrequency(80000000L);
 
   // Set A0 to input for battery measurement
   pinMode(A0, INPUT);

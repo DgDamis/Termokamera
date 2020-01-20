@@ -1,3 +1,4 @@
+// Change this file's filename extension (suffix) to have a flashable clearing code
 
 #include <Arduino.h>
 #include "SPI.h"
