@@ -21,3 +21,5 @@
 <p>Vzhledem k tepelné citlivosti 8x8 bodů je vykreslení použitelného obrazu o vyšším rozlišení dosaženo interpolací dat.
 Zařízení je napájeno bateriemi Li-ion 18650 s výstupním napětím +- 3,7V
 Nabíjení je možné dvěma konektory  - Micro USB a USB-C - MAX 5V!</p>
+
+Presentation [Czech] - https://prezi.com/p/vnomt9wigawh/?present=1
