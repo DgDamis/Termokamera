@@ -1,7 +1,8 @@
-# Termokamera
+# Thermal Camera
  Wemos D1 Mini and AMG 8833 based thermal imaging device, a PlatformIO project.
 
-<h3>Part list:<h3>
+![Device preview](https://i.imgur.com/qcGjsOs.jpg)
+<h3>Part list:</h3>
 <ul>
 	<li>Wemos D1 mini,</li>
 	<li>infrared sensor AMG8833</li>
@@ -14,7 +15,6 @@
 	<li>100 nF capacitor,</li>
 	<li>switch and wires.</li>
 </ul>
-
 
 <h2>ročníkový projekt - termokamera</h2>
 <p>Jedná se o přenosné zařízení zachycující termální stopu prostředí se zobrazením na displeji.</p>
